@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kainowapp - Login Gerenciador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4C7C7A 0%, #3A5F5D 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 420px;
+            animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4C7C7A 0%, #3A5F5D 100%);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        .logo-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .logo-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #666;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #4C7C7A;
+            box-shadow: 0 0 0 4px rgba(76, 124, 122, 0.1);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4C7C7A 0%, #3A5F5D 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 124, 122, 0.4);
+        }
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border-left: 4px solid #3c3;
+        }
+        .alert-info {
+            background: #e7f3ff;
+            color: #004085;
+            border-left: 4px solid #0066cc;
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <div class="logo">🏛️</div>
+            <div class="logo-title">🏛️ Kainowapp</div>
+            <div class="logo-subtitle">Gerenciador Admin</div>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>📱 Telefone</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">📞</span>
+                    <input 
+                        type="tel" 
+                        id="telefone" 
+                        class="form-control" 
+                        placeholder="11999999999"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🔑 Senha</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input 
+                        type="password" 
+                        id="senha" 
+                        class="form-control" 
+                        placeholder="Digite sua senha"
+                        required
+                    >
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar no Gerenciador
+            </button>
+        </form>
+
+        <div class="footer-text">
+            ⚠️ Acesso restrito a administradores
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBl8xVK91d9k00_zTkt_QjhCsg6njDE3Bw",
+            authDomain: "kainowapp.firebaseapp.com",
+            projectId: "kainowapp",
+            storageBucket: "kainowapp.firebasestorage.app",
+            messagingSenderId: "488426835060",
+            appId: "1:488426835060:web:37f7c72cbed08d8e6f83de"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const alertDiv = document.getElementById('alert');
+        const btnLogin = document.getElementById('btnLogin');
+        const loginForm = document.getElementById('loginForm');
+
+        function showAlert(message, type = 'error') {
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            alertDiv.textContent = message;
+        }
+
+        function hideAlert() {
+            alertDiv.style.display = 'none';
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const telefone = document.getElementById('telefone').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            if (!telefone || !senha) {
+                showAlert('❌ Preencha todos os campos');
+                return;
+            }
+
+            // Disable button and show loading
+            btnLogin.disabled = true;
+            btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
+            hideAlert();
+
+            try {
+                console.log('🔍 Buscando usuário:', telefone);
+
+                // Query Firestore for user with this phone
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('phone_number', '==', telefone));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    throw new Error('Usuário não encontrado');
+                }
+
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+
+                console.log('✅ Usuário encontrado:', userData.name);
+                console.log('🔐 Role:', userData.role);
+
+                // Check if user is admin
+                if (userData.role !== 'admin') {
+                    throw new Error('Acesso negado. Apenas administradores podem acessar.');
+                }
+
+                // Create admin session
+                const adminSession = {
+                    userId: userDoc.id,
+                    name: userData.name,
+                    phone: userData.phone_number,
+                    email: userData.email || '',
+                    role: userData.role,
+                    loginTime: new Date().toISOString()
+                };
+
+                // Save to localStorage (persistent)
+                localStorage.setItem('adminSession', JSON.stringify(adminSession));
+
+                console.log('✅ Sessão criada:', adminSession);
+
+                // Show success
+                showAlert('✅ Login realizado! Redirecionando...', 'success');
+
+                // Redirect to gerenciador
+                setTimeout(() => {
+                    window.location.href = '/gerenciador';
+                }, 1000);
+
+            } catch (error) {
+                console.error('❌ Erro ao fazer login:', error);
+                showAlert('❌ ' + error.message);
+                
+                // Re-enable button
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Entrar no Gerenciador';
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const session = localStorage.getItem('adminSession');
+            
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    
+                    // Check if session expired (24 hours)
+                    const loginTime = new Date(sessionData.loginTime);
+                    const now = new Date();
+                    const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff < 24) {
+                        showAlert('✅ Você já está logado. Redirecionando...', 'info');
+                        setTimeout(() => {
+                            window.location.href = '/gerenciador';
+                        }, 1000);
+                    } else {
+                        // Session expired
+                        localStorage.removeItem('adminSession');
+                    }
+                } catch (e) {
+                    localStorage.removeItem('adminSession');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
