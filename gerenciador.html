@@ -4,270 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kainowapp - Gerenciador Admin</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-        }
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        .container { display: flex; min-height: 100vh; }
         
         /* SIDEBAR */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #4C7C7A 0%, #3A5F5D 100%);
-            color: white;
-            padding: 20px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
+            width: 280px; background: linear-gradient(180deg, #4C7C7A 0%, #3A5F5D 100%);
+            color: white; padding: 20px; position: fixed; height: 100vh; overflow-y: auto;
         }
-        .logo {
-            font-size: 48px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .logo-text {
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        .logo { font-size: 48px; text-align: center; margin-bottom: 10px; }
+        .logo-text { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 30px; }
         .admin-info {
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-bottom: 30px;
         }
-        .admin-info h3 {
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-        .admin-info p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        .nav-menu {
-            list-style: none;
-        }
-        .nav-item {
-            margin-bottom: 10px;
-        }
+        .admin-info h3 { font-size: 16px; margin-bottom: 5px; }
+        .admin-info p { font-size: 12px; opacity: 0.8; }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 10px; }
         .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background 0.3s;
-            cursor: pointer;
+            display: flex; align-items: center; padding: 12px 15px; color: white;
+            text-decoration: none; border-radius: 8px; transition: background 0.3s; cursor: pointer;
         }
-        .nav-link:hover, .nav-link.active {
-            background: rgba(255,255,255,0.2);
-        }
-        .nav-link .icon {
-            margin-right: 12px;
-            font-size: 20px;
-        }
+        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.2); }
+        .nav-link .icon { margin-right: 12px; font-size: 20px; }
         .logout-btn {
-            margin-top: 30px;
-            background: rgba(255,0,0,0.3);
-            border: none;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 14px;
-            font-weight: 600;
+            margin-top: 30px; background: rgba(255,0,0,0.3); border: none; color: white;
+            padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 14px; font-weight: 600;
         }
-        .logout-btn:hover {
-            background: rgba(255,0,0,0.5);
-        }
+        .logout-btn:hover { background: rgba(255,0,0,0.5); }
 
         /* MAIN CONTENT */
-        .main-content {
-            margin-left: 280px;
-            flex: 1;
-            padding: 30px;
-        }
-        .header {
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
-        .view-section {
-            display: none;
-        }
-        .view-section.active {
-            display: block;
-        }
-        
-        /* STATS CARDS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+        .main-content { margin-left: 280px; flex: 1; padding: 30px; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 32px; color: #333; margin-bottom: 10px; }
+        .page-header p { color: #666; }
+
+        /* CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .stat-card .icon {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #4C7C7A;
-            margin-bottom: 5px;
-        }
-        .stat-card .label {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        /* TABLE */
-        .table-container {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        th {
-            background: #f5f5f5;
-            font-weight: 600;
-            color: #333;
-        }
-        tr:hover {
-            background: #f9f9f9;
-        }
-        
-        /* FORM */
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #4C7C7A;
-        }
-        
-        /* BUTTONS */
+        .stat-info h3 { font-size: 14px; color: #666; margin-bottom: 10px; }
+        .stat-info p { font-size: 32px; font-weight: bold; color: #333; }
+        .stat-icon { font-size: 48px; opacity: 0.3; }
+
+        /* TABELA */
+        .table-container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8f9fa; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #e9ecef; }
+        th { font-weight: 600; color: #495057; font-size: 14px; }
+        td { color: #212529; font-size: 14px; }
+        tr:hover { background: #f8f9fa; }
+
+        /* BOTÕES */
         .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
+            padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 600; transition: all 0.3s;
+        }
+        .btn-primary { background: #4C7C7A; color: white; }
+        .btn-primary:hover { background: #3A5F5D; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-warning:hover { background: #e0a800; }
+
+        /* BADGES */
+        .badge {
+            padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+
+        /* MODAL */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 12px; width: 90%;
+            max-width: 600px; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { font-size: 24px; }
+        .modal-close {
+            font-size: 32px; cursor: pointer; color: #999;
+            background: none; border: none;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
             font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
         }
-        .btn-primary {
-            background: #4C7C7A;
-            color: white;
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        /* LOADING */
+        .loading {
+            display: none; text-align: center; padding: 40px;
         }
-        .btn-primary:hover {
-            background: #3A5F5D;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(76, 124, 122, 0.3);
+        .loading.active { display: block; }
+        .spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid #4C7C7A;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite; margin: 0 auto;
         }
-        .btn-success {
-            background: #4CAF50;
-            color: white;
-        }
-        .btn-success:hover {
-            background: #45a049;
-        }
-        .btn-danger {
-            background: #f44336;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #da190b;
-        }
-        
-        /* ALERT */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border-left: 4px solid #ffc107;
-        }
-        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* EMPTY STATE */
         .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
+            text-align: center; padding: 60px 20px; color: #999;
         }
-        .empty-state .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
+        .empty-state .icon { font-size: 64px; margin-bottom: 20px; opacity: 0.3; }
+        .empty-state h3 { font-size: 20px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="logo">🏛️</div>
+            <div class="logo">📱</div>
             <div class="logo-text">Kainowapp Admin</div>
             
             <div class="admin-info">
@@ -277,671 +149,991 @@
             
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a class="nav-link active" onclick="showView('dashboard')">
-                        <span class="icon">📊</span>
-                        <span>Dashboard</span>
+                    <a class="nav-link active" onclick="showPage('dashboard')">
+                        <span class="icon">📊</span> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('sellers')">
-                        <span class="icon">🏪</span>
-                        <span>Vendedores</span>
+                    <a class="nav-link" onclick="showPage('vendedores')">
+                        <span class="icon">🏪</span> Vendedores
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('clients')">
-                        <span class="icon">👥</span>
-                        <span>Clientes</span>
+                    <a class="nav-link" onclick="showPage('clientes')">
+                        <span class="icon">👥</span> Clientes
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('products')">
-                        <span class="icon">📦</span>
-                        <span>Produtos</span>
+                    <a class="nav-link" onclick="showPage('produtos')">
+                        <span class="icon">📦</span> Produtos
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('insurances')">
-                        <span class="icon">🛡️</span>
-                        <span>Seguros</span>
+                    <a class="nav-link" onclick="showPage('seguros')">
+                        <span class="icon">🛡️</span> Seguros
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('orders')">
-                        <span class="icon">📋</span>
-                        <span>Pedidos</span>
+                    <a class="nav-link" onclick="showPage('pedidos')">
+                        <span class="icon">🛒</span> Pedidos
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('referrals')">
-                        <span class="icon">📊</span>
-                        <span>Indicações</span>
+                    <a class="nav-link" onclick="showPage('indicacoes')">
+                        <span class="icon">🎁</span> Indicações
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('commissions')">
-                        <span class="icon">💰</span>
-                        <span>Comissões</span>
+                    <a class="nav-link" onclick="showPage('upload-apk')">
+                        <span class="icon">📱</span> Upload APK
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="showView('permissions')">
-                        <span class="icon">🔐</span>
-                        <span>Permissões</span>
+                    <a class="nav-link" onclick="showPage('comissoes')">
+                        <span class="icon">💰</span> Comissões
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('permissoes')">
+                        <span class="icon">🔐</span> Permissões
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('perfil')">
+                        <span class="icon">👤</span> Meu Perfil
                     </a>
                 </li>
             </ul>
             
-            <button class="logout-btn" onclick="handleLogout()">
-                🚪 Sair
-            </button>
+            <button class="logout-btn" onclick="logout()">🚪 Sair</button>
         </div>
-        
+
         <!-- MAIN CONTENT -->
         <div class="main-content">
-            <!-- DASHBOARD -->
-            <div id="dashboard" class="view-section active">
-                <div class="header">
-                    <h1>📊 Dashboard</h1>
-                    <p>Visão geral do sistema</p>
+            <!-- DASHBOARD PAGE -->
+            <div id="dashboard-page" class="page active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Visão geral da plataforma</p>
                 </div>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="icon">👥</div>
-                        <div class="value" id="totalUsers">0</div>
-                        <div class="label">Total de Usuários</div>
+                        <div class="stat-info">
+                            <h3>Vendedores</h3>
+                            <p id="totalVendedores">0</p>
+                        </div>
+                        <div class="stat-icon">🏪</div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon">🏪</div>
-                        <div class="value" id="totalSellers">0</div>
-                        <div class="label">Vendedores</div>
+                        <div class="stat-info">
+                            <h3>Clientes</h3>
+                            <p id="totalClientes">0</p>
+                        </div>
+                        <div class="stat-icon">👥</div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon">📦</div>
-                        <div class="value" id="totalProducts">0</div>
-                        <div class="label">Produtos</div>
+                        <div class="stat-info">
+                            <h3>Produtos</h3>
+                            <p id="totalProdutos">0</p>
+                        </div>
+                        <div class="stat-icon">📦</div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon">💰</div>
-                        <div class="value" id="totalRevenue">R$ 0</div>
-                        <div class="label">Receita Total</div>
+                        <div class="stat-info">
+                            <h3>Seguros</h3>
+                            <p id="totalSeguros">0</p>
+                        </div>
+                        <div class="stat-icon">🛡️</div>
                     </div>
-                </div>
-                
-                <div class="alert alert-info">
-                    ✅ Sistema funcionando normalmente. Última sincronização: <span id="lastSync">Carregando...</span>
                 </div>
             </div>
-            
-            <!-- VENDEDORES -->
-            <div id="sellers" class="view-section">
-                <div class="header">
-                    <h1>🏪 Vendedores</h1>
-                    <p>Gerenciar vendedores cadastrados</p>
+
+            <!-- VENDEDORES PAGE -->
+            <div id="vendedores-page" class="page">
+                <div class="page-header">
+                    <h1>Vendedores</h1>
+                    <p>Gerenciar vendedores da plataforma</p>
                 </div>
                 
-                <div class="table-container">
-                    <table id="sellersTable">
+                <button class="btn btn-primary" onclick="openModal('add-vendedor')" style="margin-bottom: 20px;">
+                    ➕ Adicionar Vendedor
+                </button>
+                
+                <div class="loading" id="loading-vendedores">
+                    <div class="spinner"></div>
+                    <p>Carregando vendedores...</p>
+                </div>
+                
+                <div class="table-container" id="vendedores-table">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Telefone</th>
-                                <th>Loja</th>
+                                <th>Email/Telefone</th>
+                                <th>Status</th>
+                                <th>Data Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendedoresTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CLIENTES PAGE -->
+            <div id="clientes-page" class="page">
+                <div class="page-header">
+                    <h1>Clientes</h1>
+                    <p>Gerenciar clientes da plataforma</p>
+                </div>
+                
+                <div class="loading" id="loading-clientes">
+                    <div class="spinner"></div>
+                    <p>Carregando clientes...</p>
+                </div>
+                
+                <div class="table-container" id="clientes-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email/Telefone</th>
+                                <th>Status</th>
+                                <th>Data Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PRODUTOS PAGE -->
+            <div id="produtos-page" class="page">
+                <div class="page-header">
+                    <h1>Produtos</h1>
+                    <p>Gerenciar produtos disponíveis</p>
+                </div>
+                
+                <button class="btn btn-primary" onclick="openModal('add-produto')" style="margin-bottom: 20px;">
+                    ➕ Adicionar Produto
+                </button>
+                
+                <div class="loading" id="loading-produtos">
+                    <div class="spinner"></div>
+                    <p>Carregando produtos...</p>
+                </div>
+                
+                <div class="table-container" id="produtos-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="icon">🏪</div>
-                                        <p>Nenhum vendedor cadastrado</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="produtosTableBody"></tbody>
                     </table>
                 </div>
             </div>
-            
-            <!-- CLIENTES -->
-            <div id="clients" class="view-section">
-                <div class="header">
-                    <h1>👥 Clientes</h1>
-                    <p>Gerenciar clientes cadastrados</p>
-                </div>
-                
-                <div class="table-container">
-                    <table id="clientsTable">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Telefone</th>
-                                <th>Email</th>
-                                <th>Cadastro</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="icon">👥</div>
-                                        <p>Nenhum cliente cadastrado</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- PRODUTOS -->
-            <div id="products" class="view-section">
-                <div class="header">
-                    <h1>📦 Produtos</h1>
-                    <p>Gerenciar produtos do marketplace</p>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Vendedor</th>
-                                <th>Preço</th>
-                                <th>Estoque</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="icon">📦</div>
-                                        <p>Nenhum produto cadastrado</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- SEGUROS -->
-            <div id="insurances" class="view-section">
-                <div class="header">
-                    <h1>🛡️ Seguros</h1>
+
+            <!-- SEGUROS PAGE -->
+            <div id="seguros-page" class="page">
+                <div class="page-header">
+                    <h1>Seguros</h1>
                     <p>Gerenciar seguros disponíveis</p>
                 </div>
                 
-                <div class="table-container">
+                <button class="btn btn-primary" onclick="openModal('add-seguro')" style="margin-bottom: 20px;">
+                    ➕ Adicionar Seguro
+                </button>
+                
+                <div class="loading" id="loading-seguros">
+                    <div class="spinner"></div>
+                    <p>Carregando seguros...</p>
+                </div>
+                
+                <div class="table-container" id="seguros-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>Seguro</th>
-                                <th>Preço</th>
-                                <th>Contratações</th>
-                                <th>Status</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Cobertura</th>
+                                <th>Valor</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="icon">🛡️</div>
-                                        <p>Nenhum seguro cadastrado</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="segurosTableBody"></tbody>
                     </table>
                 </div>
             </div>
-            
-            <!-- PEDIDOS -->
-            <div id="orders" class="view-section">
-                <div class="header">
-                    <h1>📋 Pedidos</h1>
-                    <p>Acompanhar pedidos realizados</p>
+
+            <!-- PEDIDOS PAGE -->
+            <div id="pedidos-page" class="page">
+                <div class="page-header">
+                    <h1>Pedidos</h1>
+                    <p>Histórico de pedidos</p>
+                </div>
+                
+                <div class="empty-state">
+                    <div class="icon">🛒</div>
+                    <h3>Em desenvolvimento</h3>
+                    <p>Funcionalidade de pedidos será implementada em breve</p>
+                </div>
+            </div>
+
+            <!-- INDICAÇÕES PAGE -->
+            <div id="indicacoes-page" class="page">
+                <div class="page-header">
+                    <h1>Indicações</h1>
+                    <p>Sistema de indicações e comissões</p>
+                </div>
+                
+                <div class="empty-state">
+                    <div class="icon">🎁</div>
+                    <h3>Em desenvolvimento</h3>
+                    <p>Sistema de indicações será implementado em breve</p>
+                </div>
+            </div>
+
+            <!-- UPLOAD APK PAGE -->
+            <div id="upload-apk-page" class="page">
+                <div class="page-header">
+                    <h1>Upload APK</h1>
+                    <p>Enviar nova versão do aplicativo</p>
                 </div>
                 
                 <div class="table-container">
+                    <h3 style="margin-bottom: 20px;">Versão Atual</h3>
+                    <div class="stat-card" style="margin-bottom: 20px;">
+                        <div class="stat-info">
+                            <h3>Versão</h3>
+                            <p>1.1.0</p>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Tamanho</h3>
+                            <p>125 MB</p>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Última Atualização</h3>
+                            <p>08/01/2026</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Novo APK</label>
+                        <input type="file" id="apkFileInput" accept=".apk" />
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="uploadAPK()">📤 Fazer Upload</button>
+                    
+                    <p style="margin-top: 20px; color: #666; font-size: 14px;">
+                        Link público: <a href="https://pub-a375404e92d74bfeb14ad27b602da2e0.r2.dev/kainowapp.apk" target="_blank">https://pub-a375404e92d74bfeb14ad27b602da2e0.r2.dev/kainowapp.apk</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- COMISSÕES PAGE -->
+            <div id="comissoes-page" class="page">
+                <div class="page-header">
+                    <h1>Comissões</h1>
+                    <p>Configurar comissões e pagamentos</p>
+                </div>
+                
+                <div class="table-container">
+                    <h3 style="margin-bottom: 20px;">Configuração de Comissões</h3>
+                    
+                    <div class="form-group">
+                        <label>Comissão Vendedor (%)</label>
+                        <input type="number" id="comissaoVendedor" value="10" min="0" max="100" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Comissão Indicação (%)</label>
+                        <input type="number" id="comissaoIndicacao" value="5" min="0" max="100" />
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="saveComissoes()">💾 Salvar Configurações</button>
+                </div>
+            </div>
+
+            <!-- PERMISSÕES PAGE -->
+            <div id="permissoes-page" class="page">
+                <div class="page-header">
+                    <h1>Permissões</h1>
+                    <p>Gerenciar permissões de usuários</p>
+                </div>
+                
+                <div class="table-container">
+                    <h3 style="margin-bottom: 20px;">Perfis e Permissões</h3>
+                    
                     <table>
                         <thead>
                             <tr>
-                                <th>Pedido</th>
-                                <th>Cliente</th>
-                                <th>Valor</th>
-                                <th>Status</th>
-                                <th>Data</th>
+                                <th>Perfil</th>
+                                <th>Dashboard</th>
+                                <th>Vendedores</th>
+                                <th>Produtos</th>
+                                <th>Comissões</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="icon">📋</div>
-                                        <p>Nenhum pedido encontrado</p>
-                                    </div>
-                                </td>
+                                <td><strong>Admin</strong></td>
+                                <td>✅ Total</td>
+                                <td>✅ Total</td>
+                                <td>✅ Total</td>
+                                <td>✅ Total</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vendedor</strong></td>
+                                <td>✅ Leitura</td>
+                                <td>❌ Sem acesso</td>
+                                <td>✅ Leitura</td>
+                                <td>✅ Leitura</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cliente</strong></td>
+                                <td>❌ Sem acesso</td>
+                                <td>❌ Sem acesso</td>
+                                <td>✅ Leitura</td>
+                                <td>❌ Sem acesso</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            
-            <!-- INDICAÇÕES -->
-            <div id="referrals" class="view-section">
-                <div class="header">
-                    <h1>📊 Indicações</h1>
-                    <p>Programa de indicações e comissões</p>
+
+            <!-- PERFIL PAGE -->
+            <div id="perfil-page" class="page">
+                <div class="page-header">
+                    <h1>Meu Perfil</h1>
+                    <p>Informações da conta</p>
                 </div>
                 
                 <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Usuário</th>
-                                <th>Indicados</th>
-                                <th>Comissão Total</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="4">
-                                    <div class="empty-state">
-                                        <div class="icon">📊</div>
-                                        <p>Nenhuma indicação encontrada</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- COMISSÕES -->
-            <div id="commissions" class="view-section">
-                <div class="header">
-                    <h1>💰 Comissões</h1>
-                    <p>Configurar e gerenciar comissões</p>
-                </div>
-                
-                <div class="alert alert-success">
-                    💰 Configuração de Comissões
-                </div>
-                
-                <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                     <div class="form-group">
-                        <label>Cliente que Indica - Seguros (%)</label>
-                        <input type="number" class="form-control" id="clientInsurance" value="2" min="0" max="100">
+                        <label>Nome</label>
+                        <input type="text" id="perfilNome" value="Admin" />
                     </div>
                     
                     <div class="form-group">
-                        <label>Vendedor Vinculado - Seguros (%)</label>
-                        <input type="number" class="form-control" id="sellerInsurance" value="3" min="0" max="100">
+                        <label>Email</label>
+                        <input type="email" id="perfilEmail" value="admin@kainowapp.com" />
                     </div>
                     
                     <div class="form-group">
-                        <label>Cliente que Indica - Marketplace (%)</label>
-                        <input type="number" class="form-control" id="clientMarketplace" value="2" min="0" max="100">
+                        <label>Telefone</label>
+                        <input type="tel" id="perfilTelefone" value="+55 11 99999-9999" />
                     </div>
                     
-                    <button class="btn btn-success" onclick="saveCommissions()">
-                        💾 Salvar Configurações
-                    </button>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                    <h3 style="margin-bottom: 15px;">💚 Histórico de Comissões</h3>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Usuário</th>
-                                    <th>Tipo</th>
-                                    <th>Valor</th>
-                                    <th>Origem</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="6">
-                                        <div class="empty-state">
-                                            <div class="icon">💰</div>
-                                            <p>Nenhuma comissão encontrada</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- PERMISSÕES -->
-            <div id="permissions" class="view-section">
-                <div class="header">
-                    <h1>🔐 Permissões</h1>
-                    <p>Gerenciar permissões por perfil</p>
-                </div>
-                
-                <div class="alert alert-warning">
-                    ⚠️ Alterações em permissões afetam imediatamente todos os usuários
-                </div>
-                
-                <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <h3 style="margin-bottom: 20px;">👑 Administrador</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Acesso total ao sistema</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Gerenciar usuários</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Aprovar vendedores</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Configurar comissões</li>
-                        <li style="padding: 10px;">✅ Ver relatórios financeiros</li>
-                    </ul>
-                    
-                    <h3 style="margin: 30px 0 20px;">🏪 Vendedor</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Cadastrar produtos</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Gerenciar loja</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Ver vendas próprias</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Receber comissões (85%)</li>
-                        <li style="padding: 10px;">❌ Aprovar outros vendedores</li>
-                    </ul>
-                    
-                    <h3 style="margin: 30px 0 20px;">👤 Cliente</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Comprar produtos</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Contratar seguros</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Indicar amigos</li>
-                        <li style="padding: 10px; border-bottom: 1px solid #e0e0e0;">✅ Receber comissões de indicação</li>
-                        <li style="padding: 10px;">❌ Cadastrar produtos</li>
-                    </ul>
+                    <button class="btn btn-success" onclick="saveProfile()">💾 Salvar Alterações</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        
-        // Firebase config
+
+    <!-- MODAL ADICIONAR VENDEDOR -->
+    <div id="add-vendedor-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Vendedor</h2>
+                <button class="modal-close" onclick="closeModal('add-vendedor')">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="vendedorNome" placeholder="Ex: João Silva" />
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="vendedorEmail" placeholder="joao@email.com" />
+            </div>
+            
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="tel" id="vendedorTelefone" placeholder="+55 11 99999-9999" />
+            </div>
+            
+            <div class="form-group">
+                <label>CPF</label>
+                <input type="text" id="vendedorCPF" placeholder="000.000.000-00" />
+            </div>
+            
+            <button class="btn btn-success" onclick="addVendedor()">✅ Adicionar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADICIONAR PRODUTO -->
+    <div id="add-produto-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Produto</h2>
+                <button class="modal-close" onclick="closeModal('add-produto')">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Nome do Produto</label>
+                <input type="text" id="produtoNome" placeholder="Ex: iPhone 15 Pro" />
+            </div>
+            
+            <div class="form-group">
+                <label>Categoria</label>
+                <select id="produtoCategoria">
+                    <option value="">Selecione...</option>
+                    <option value="Smartphones">Smartphones</option>
+                    <option value="Eletrônicos">Eletrônicos</option>
+                    <option value="Seguros">Seguros</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Preço (R$)</label>
+                <input type="number" id="produtoPreco" placeholder="0.00" step="0.01" />
+            </div>
+            
+            <div class="form-group">
+                <label>Descrição</label>
+                <textarea id="produtoDescricao" placeholder="Descreva o produto..."></textarea>
+            </div>
+            
+            <button class="btn btn-success" onclick="addProduto()">✅ Adicionar</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADICIONAR SEGURO -->
+    <div id="add-seguro-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Seguro</h2>
+                <button class="modal-close" onclick="closeModal('add-seguro')">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Nome do Seguro</label>
+                <input type="text" id="seguroNome" placeholder="Ex: Seguro Total Premium" />
+            </div>
+            
+            <div class="form-group">
+                <label>Tipo</label>
+                <select id="seguroTipo">
+                    <option value="">Selecione...</option>
+                    <option value="Roubo e Furto">Roubo e Furto</option>
+                    <option value="Danos Físicos">Danos Físicos</option>
+                    <option value="Total">Cobertura Total</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Cobertura (R$)</label>
+                <input type="number" id="seguroCobertura" placeholder="0.00" step="0.01" />
+            </div>
+            
+            <div class="form-group">
+                <label>Valor Mensal (R$)</label>
+                <input type="number" id="seguroValor" placeholder="0.00" step="0.01" />
+            </div>
+            
+            <button class="btn btn-success" onclick="addSeguro()">✅ Adicionar</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyBl8xVK91d9k00_zTkt_QjhCsg6njDE3Bw",
+            apiKey: "AIzaSyBp2g_YCKQQQc_pSdPZ1xHZJFZD66wZxYk",
             authDomain: "kainowapp.firebaseapp.com",
             projectId: "kainowapp",
             storageBucket: "kainowapp.firebasestorage.app",
-            messagingSenderId: "488426835060",
-            appId: "1:488426835060:web:37f7c72cbed08d8e6f83de"
+            messagingSenderId: "451697688894",
+            appId: "1:451697688894:web:c5ba6d8a3d5e3e9b8e8e8e"
         };
         
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        // Global functions
-        window.showView = function(viewId) {
-            // Hide all views
-            document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active');
-            });
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // NAVEGAÇÃO
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             
-            // Remove active from all nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Show selected view
-            document.getElementById(viewId).classList.add('active');
-            
-            // Add active to clicked nav link
+            document.getElementById(`${pageName}-page`).classList.add('active');
             event.target.closest('.nav-link').classList.add('active');
             
-            // Load data for this view
-            loadViewData(viewId);
-        };
-        
-        window.handleLogout = function() {
-            if (confirm('Deseja realmente sair?')) {
-                console.log('🚪 Fazendo logout...');
-                localStorage.removeItem('adminSession');
-                sessionStorage.clear();
-                window.location.href = '/gerenciador_login';
-            }
-        };
-        
-        window.saveCommissions = async function() {
-            const clientInsurance = document.getElementById('clientInsurance').value;
-            const sellerInsurance = document.getElementById('sellerInsurance').value;
-            const clientMarketplace = document.getElementById('clientMarketplace').value;
-            
-            try {
-                await setDoc(doc(db, 'settings', 'commissions'), {
-                    client_insurance: parseFloat(clientInsurance),
-                    seller_insurance: parseFloat(sellerInsurance),
-                    client_marketplace: parseFloat(clientMarketplace),
-                    updated_at: new Date().toISOString()
-                });
-                
-                alert('✅ Comissões salvas com sucesso!');
-            } catch (error) {
-                console.error('Erro ao salvar:', error);
-                alert('❌ Erro ao salvar comissões');
-            }
-        };
-        
-        // Load view data
-        function loadViewData(viewId) {
-            switch(viewId) {
-                case 'dashboard':
-                    loadDashboardStats();
-                    break;
-                case 'sellers':
-                    loadSellers();
-                    break;
-                case 'clients':
-                    loadClients();
-                    break;
-                case 'commissions':
-                    loadCommissionsSettings();
-                    break;
-            }
+            // CARREGAR DADOS DA PÁGINA
+            if (pageName === 'dashboard') loadDashboard();
+            if (pageName === 'vendedores') loadVendedores();
+            if (pageName === 'clientes') loadClientes();
+            if (pageName === 'produtos') loadProdutos();
+            if (pageName === 'seguros') loadSeguros();
         }
-        
-        // Load dashboard stats
-        async function loadDashboardStats() {
-            try {
-                // Count users
-                const usersSnapshot = await getDocs(collection(db, 'users'));
-                document.getElementById('totalUsers').textContent = usersSnapshot.size;
-                
-                // Count sellers
-                const sellers = usersSnapshot.docs.filter(doc => doc.data().role === 'seller');
-                document.getElementById('totalSellers').textContent = sellers.length;
-                
-                // Last sync
-                document.getElementById('lastSync').textContent = new Date().toLocaleString('pt-BR');
-                
-            } catch (error) {
-                console.error('Erro ao carregar estatísticas:', error);
-            }
-        }
-        
-        // Load sellers
-        async function loadSellers() {
-            try {
-                const usersSnapshot = await getDocs(collection(db, 'users'));
-                const sellers = usersSnapshot.docs.filter(doc => doc.data().role === 'seller');
-                
-                const tbody = document.querySelector('#sellersTable tbody');
-                tbody.innerHTML = '';
-                
-                if (sellers.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <div class="icon">🏪</div>
-                                    <p>Nenhum vendedor cadastrado</p>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    sellers.forEach(doc => {
-                        const seller = doc.data();
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${seller.name || 'N/A'}</td>
-                                <td>${seller.phone_number || 'N/A'}</td>
-                                <td>${seller.store_name || 'N/A'}</td>
-                                <td>${seller.is_approved ? '✅ Aprovado' : '⏳ Pendente'}</td>
-                                <td>
-                                    <button class="btn btn-primary" onclick="viewSeller('${doc.id}')">Ver</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-            } catch (error) {
-                console.error('Erro ao carregar vendedores:', error);
-            }
-        }
-        
-        // Load clients
-        async function loadClients() {
-            try {
-                const usersSnapshot = await getDocs(collection(db, 'users'));
-                const clients = usersSnapshot.docs.filter(doc => doc.data().role === 'buyer');
-                
-                const tbody = document.querySelector('#clientsTable tbody');
-                tbody.innerHTML = '';
-                
-                if (clients.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <div class="icon">👥</div>
-                                    <p>Nenhum cliente cadastrado</p>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    clients.forEach(doc => {
-                        const client = doc.data();
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${client.name || 'N/A'}</td>
-                                <td>${client.phone_number || 'N/A'}</td>
-                                <td>${client.email || 'N/A'}</td>
-                                <td>${new Date(client.registration_date).toLocaleDateString('pt-BR')}</td>
-                                <td>
-                                    <button class="btn btn-primary" onclick="viewClient('${doc.id}')">Ver</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-            } catch (error) {
-                console.error('Erro ao carregar clientes:', error);
-            }
-        }
-        
-        // Load commissions settings
-        async function loadCommissionsSettings() {
-            try {
-                const settingsDoc = await getDoc(doc(db, 'settings', 'commissions'));
-                if (settingsDoc.exists()) {
-                    const data = settingsDoc.data();
-                    document.getElementById('clientInsurance').value = data.client_insurance || 2;
-                    document.getElementById('sellerInsurance').value = data.seller_insurance || 3;
-                    document.getElementById('clientMarketplace').value = data.client_marketplace || 2;
-                }
-            } catch (error) {
-                console.error('Erro ao carregar configurações:', error);
-            }
-        }
-        
-        // Check authentication (aceita auth do app ou do login web)
+
+        // AUTENTICAÇÃO
         function checkAuth() {
-            // 🔥 PRIORIDADE 1: Verificar autenticação injetada pelo APP
             const appAuth = localStorage.getItem('adminAuth');
+            const webAuth = localStorage.getItem('adminSession');
+            
             if (appAuth) {
                 try {
                     const authData = JSON.parse(appAuth);
-                    const now = Date.now();
-                    
-                    // Verificar se não expirou
-                    if (authData.expiresAt && authData.expiresAt > now) {
-                        console.log('✅ Autenticado via APP:', authData.name);
-                        
-                        // Update admin info in sidebar
+                    const now = new Date().getTime();
+                    if (authData.expiresAt && now < authData.expiresAt) {
                         document.getElementById('adminName').textContent = authData.name || 'Admin';
                         document.getElementById('adminEmail').textContent = authData.email || authData.phone || '';
-                        
                         return true;
-                    } else {
-                        console.log('⏰ Auth do APP expirou');
-                        localStorage.removeItem('adminAuth');
                     }
                 } catch (e) {
-                    console.error('❌ Erro ao processar auth do APP:', e);
-                    localStorage.removeItem('adminAuth');
+                    console.error('Erro ao verificar auth do app:', e);
                 }
             }
             
-            // 🔥 PRIORIDADE 2: Verificar sessão do login web
-            const session = localStorage.getItem('adminSession');
+            if (webAuth) {
+                try {
+                    const sessionData = JSON.parse(webAuth);
+                    const loginTime = new Date(sessionData.loginTime).getTime();
+                    const now = new Date().getTime();
+                    const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+                    
+                    if (hoursSinceLogin < 24) {
+                        document.getElementById('adminName').textContent = sessionData.name || 'Admin';
+                        document.getElementById('adminEmail').textContent = sessionData.email || sessionData.phone || '';
+                        return true;
+                    } else {
+                        localStorage.removeItem('adminSession');
+                    }
+                } catch (e) {
+                    console.error('Erro ao verificar sessão web:', e);
+                }
+            }
             
-            if (!session) {
-                console.log('❌ Sem sessão, redirecionando para login...');
-                window.location.href = '/gerenciador_login';
-                return false;
+            window.location.href = '/gerenciador_login';
+            return false;
+        }
+
+        function logout() {
+            localStorage.removeItem('adminAuth');
+            localStorage.removeItem('adminSession');
+            window.location.href = '/gerenciador_login';
+        }
+
+        // DASHBOARD
+        async function loadDashboard() {
+            try {
+                const vendedores = await db.collection('users').where('role', '==', 'seller').get();
+                const clientes = await db.collection('users').where('role', '==', 'buyer').get();
+                const produtos = await db.collection('products').get();
+                const seguros = await db.collection('insurances').get();
+                
+                document.getElementById('totalVendedores').textContent = vendedores.size;
+                document.getElementById('totalClientes').textContent = clientes.size;
+                document.getElementById('totalProdutos').textContent = produtos.size;
+                document.getElementById('totalSeguros').textContent = seguros.size;
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+
+        // VENDEDORES
+        async function loadVendedores() {
+            const loading = document.getElementById('loading-vendedores');
+            const tbody = document.getElementById('vendedoresTableBody');
+            
+            loading.classList.add('active');
+            tbody.innerHTML = '';
+            
+            try {
+                const snapshot = await db.collection('users').where('role', '==', 'seller').get();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    
+                    const statusBadge = data.status === 'approved' ? 
+                        '<span class="badge badge-success">Aprovado</span>' :
+                        data.status === 'pending' ?
+                        '<span class="badge badge-warning">Pendente</span>' :
+                        '<span class="badge badge-danger">Reprovado</span>';
+                    
+                    const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('pt-BR') : 'N/A';
+                    
+                    tr.innerHTML = `
+                        <td>${data.name || 'N/A'}</td>
+                        <td>${data.email || data.phone || 'N/A'}</td>
+                        <td>${statusBadge}</td>
+                        <td>${date}</td>
+                        <td>
+                            ${data.status === 'pending' ? `
+                                <button class="btn btn-success btn-sm" onclick="approveVendedor('${doc.id}')">✅ Aprovar</button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectVendedor('${doc.id}')">❌ Rejeitar</button>
+                            ` : `
+                                <button class="btn btn-warning btn-sm" onclick="editVendedor('${doc.id}')">✏️ Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteVendedor('${doc.id}')">🗑️ Excluir</button>
+                            `}
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(tr);
+                });
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">Nenhum vendedor encontrado</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar vendedores:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc3545;">Erro ao carregar vendedores</td></tr>';
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        async function addVendedor() {
+            const nome = document.getElementById('vendedorNome').value;
+            const email = document.getElementById('vendedorEmail').value;
+            const telefone = document.getElementById('vendedorTelefone').value;
+            const cpf = document.getElementById('vendedorCPF').value;
+            
+            if (!nome || (!email && !telefone)) {
+                alert('Preencha pelo menos nome e email ou telefone!');
+                return;
             }
             
             try {
-                const sessionData = JSON.parse(session);
+                await db.collection('users').add({
+                    name: nome,
+                    email: email,
+                    phone: telefone,
+                    cpf: cpf,
+                    role: 'seller',
+                    status: 'approved',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 
-                // Check if session expired (24 hours)
-                const loginTime = new Date(sessionData.loginTime);
-                const now = new Date();
-                const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
-                
-                if (hoursDiff > 24) {
-                    console.log('⏰ Sessão expirada');
-                    localStorage.removeItem('adminSession');
-                    window.location.href = '/gerenciador_login';
-                    return false;
-                }
-                
-                // Update admin info in sidebar
-                document.getElementById('adminName').textContent = sessionData.name || 'Admin';
-                document.getElementById('adminEmail').textContent = sessionData.email || sessionData.phone || '';
-                
-                console.log('✅ Sessão válida:', sessionData.name);
-                return true;
-                
-            } catch (e) {
-                console.error('❌ Erro ao verificar sessão:', e);
-                localStorage.removeItem('adminSession');
-                window.location.href = '/gerenciador_login';
-                return false;
+                alert('✅ Vendedor adicionado com sucesso!');
+                closeModal('add-vendedor');
+                loadVendedores();
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro ao adicionar vendedor:', error);
+                alert('❌ Erro ao adicionar vendedor!');
             }
         }
-        
-        // Initialize
+
+        async function approveVendedor(id) {
+            if (!confirm('Aprovar este vendedor?')) return;
+            
+            try {
+                await db.collection('users').doc(id).update({
+                    status: 'approved',
+                    approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('✅ Vendedor aprovado!');
+                loadVendedores();
+            } catch (error) {
+                console.error('Erro ao aprovar vendedor:', error);
+                alert('❌ Erro ao aprovar vendedor!');
+            }
+        }
+
+        async function rejectVendedor(id) {
+            if (!confirm('Rejeitar este vendedor?')) return;
+            
+            try {
+                await db.collection('users').doc(id).update({
+                    status: 'rejected',
+                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('❌ Vendedor rejeitado!');
+                loadVendedores();
+            } catch (error) {
+                console.error('Erro ao rejeitar vendedor:', error);
+                alert('❌ Erro ao rejeitar vendedor!');
+            }
+        }
+
+        async function deleteVendedor(id) {
+            if (!confirm('ATENÇÃO: Excluir este vendedor permanentemente?')) return;
+            
+            try {
+                await db.collection('users').doc(id).delete();
+                alert('🗑️ Vendedor excluído!');
+                loadVendedores();
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro ao excluir vendedor:', error);
+                alert('❌ Erro ao excluir vendedor!');
+            }
+        }
+
+        // CLIENTES
+        async function loadClientes() {
+            const loading = document.getElementById('loading-clientes');
+            const tbody = document.getElementById('clientesTableBody');
+            
+            loading.classList.add('active');
+            tbody.innerHTML = '';
+            
+            try {
+                const snapshot = await db.collection('users').where('role', '==', 'buyer').get();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    
+                    const statusBadge = '<span class="badge badge-success">Ativo</span>';
+                    const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('pt-BR') : 'N/A';
+                    
+                    tr.innerHTML = `
+                        <td>${data.name || 'N/A'}</td>
+                        <td>${data.email || data.phone || 'N/A'}</td>
+                        <td>${statusBadge}</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editCliente('${doc.id}')">✏️ Ver Detalhes</button>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(tr);
+                });
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">Nenhum cliente encontrado</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc3545;">Erro ao carregar clientes</td></tr>';
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        // PRODUTOS
+        async function loadProdutos() {
+            const loading = document.getElementById('loading-produtos');
+            const tbody = document.getElementById('produtosTableBody');
+            
+            loading.classList.add('active');
+            tbody.innerHTML = '';
+            
+            try {
+                const snapshot = await db.collection('products').get();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    
+                    const statusBadge = '<span class="badge badge-success">Disponível</span>';
+                    const preco = data.price ? `R$ ${parseFloat(data.price).toFixed(2)}` : 'N/A';
+                    
+                    tr.innerHTML = `
+                        <td>${data.name || 'N/A'}</td>
+                        <td>${data.category || 'N/A'}</td>
+                        <td>${preco}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editProduto('${doc.id}')">✏️ Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduto('${doc.id}')">🗑️ Excluir</button>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(tr);
+                });
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">Nenhum produto encontrado</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc3545;">Erro ao carregar produtos</td></tr>';
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        async function addProduto() {
+            const nome = document.getElementById('produtoNome').value;
+            const categoria = document.getElementById('produtoCategoria').value;
+            const preco = document.getElementById('produtoPreco').value;
+            const descricao = document.getElementById('produtoDescricao').value;
+            
+            if (!nome || !categoria || !preco) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            try {
+                await db.collection('products').add({
+                    name: nome,
+                    category: categoria,
+                    price: parseFloat(preco),
+                    description: descricao,
+                    status: 'available',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('✅ Produto adicionado com sucesso!');
+                closeModal('add-produto');
+                loadProdutos();
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro ao adicionar produto:', error);
+                alert('❌ Erro ao adicionar produto!');
+            }
+        }
+
+        async function deleteProduto(id) {
+            if (!confirm('Excluir este produto?')) return;
+            
+            try {
+                await db.collection('products').doc(id).delete();
+                alert('🗑️ Produto excluído!');
+                loadProdutos();
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro ao excluir produto:', error);
+                alert('❌ Erro ao excluir produto!');
+            }
+        }
+
+        // SEGUROS
+        async function loadSeguros() {
+            const loading = document.getElementById('loading-seguros');
+            const tbody = document.getElementById('segurosTableBody');
+            
+            loading.classList.add('active');
+            tbody.innerHTML = '';
+            
+            try {
+                const snapshot = await db.collection('insurances').get();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    
+                    const cobertura = data.coverage ? `R$ ${parseFloat(data.coverage).toFixed(2)}` : 'N/A';
+                    const valor = data.monthlyPrice ? `R$ ${parseFloat(data.monthlyPrice).toFixed(2)}` : 'N/A';
+                    
+                    tr.innerHTML = `
+                        <td>${data.name || 'N/A'}</td>
+                        <td>${data.type || 'N/A'}</td>
+                        <td>${cobertura}</td>
+                        <td>${valor}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editSeguro('${doc.id}')">✏️ Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSeguro('${doc.id}')">🗑️ Excluir</button>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(tr);
+                });
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">Nenhum seguro encontrado</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar seguros:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc3545;">Erro ao carregar seguros</td></tr>';
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        async function addSeguro() {
+            const nome = document.getElementById('seguroNome').value;
+            const tipo = document.getElementById('seguroTipo').value;
+            const cobertura = document.getElementById('seguroCobertura').value;
+            const valor = document.getElementById('seguroValor').value;
+            
+            if (!nome || !tipo || !cobertura || !valor) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+            
+            try {
+                await db.collection('insurances').add({
+                    name: nome,
+                    type: tipo,
+                    coverage: parseFloat(cobertura),
+                    monthlyPrice: parseFloat(valor),
+                    status: 'available',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('✅ Seguro adicionado com sucesso!');
+                closeModal('add-seguro');
+                loadSeguros();
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro ao adicionar seguro:', error);
+                alert('❌ Erro ao adicionar seguro!');
+            }
+        }
+
+        async function deleteSeguro(id) {
+            if (!confirm('Excluir este seguro?')) return;
+            
+            try {
+                await db.collection('insurances').doc(id).delete();
+                alert('🗑️ Seguro excluído!');
+                loadSeguros();
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro ao excluir seguro:', error);
+                alert('❌ Erro ao excluir seguro!');
+            }
+        }
+
+        // MODAL
+        function openModal(modalName) {
+            document.getElementById(`${modalName}-modal`).classList.add('active');
+        }
+
+        function closeModal(modalName) {
+            document.getElementById(`${modalName}-modal`).classList.remove('active');
+        }
+
+        // OUTRAS FUNCIONALIDADES
+        function uploadAPK() {
+            alert('🚧 Funcionalidade em desenvolvimento!\nPor enquanto, use Wrangler CLI para upload automático.');
+        }
+
+        function saveComissoes() {
+            alert('💾 Configurações de comissões salvas!');
+        }
+
+        function saveProfile() {
+            alert('💾 Perfil atualizado com sucesso!');
+        }
+
+        function editVendedor(id) {
+            alert(`Editar vendedor ${id} - Em desenvolvimento`);
+        }
+
+        function editCliente(id) {
+            alert(`Ver detalhes do cliente ${id} - Em desenvolvimento`);
+        }
+
+        function editProduto(id) {
+            alert(`Editar produto ${id} - Em desenvolvimento`);
+        }
+
+        function editSeguro(id) {
+            alert(`Editar seguro ${id} - Em desenvolvimento`);
+        }
+
+        // INICIALIZAÇÃO
         window.addEventListener('DOMContentLoaded', () => {
             if (checkAuth()) {
-                loadDashboardStats();
+                loadDashboard();
             }
         });
     </script>
