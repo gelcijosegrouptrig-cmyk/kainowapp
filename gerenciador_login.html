@@ -10,24 +10,27 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4C7C7A 0%, #3A5F5D 100%);
+            background: linear-gradient(180deg, #4C7C7A 0%, #3A5F5D 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
+        
         .login-container {
             background: white;
-            padding: 40px;
             border-radius: 20px;
+            padding: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
             max-width: 420px;
+            width: 100%;
             animation: slideIn 0.5s ease;
         }
+        
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -38,309 +41,359 @@
                 transform: translateY(0);
             }
         }
+        
         .logo-section {
             text-align: center;
             margin-bottom: 30px;
         }
+        
         .logo {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #4C7C7A 0%, #3A5F5D 100%);
+            background: linear-gradient(135deg, #4C7C7A 0%, #5A9B98 100%);
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
             margin-bottom: 15px;
+            box-shadow: 0 8px 20px rgba(76, 124, 122, 0.3);
         }
-        .logo-title {
-            font-size: 24px;
+        
+        .logo-text {
+            font-size: 36px;
+            color: white;
             font-weight: bold;
-            color: #333;
+        }
+        
+        .logo-section h1 {
+            color: #4C7C7A;
+            font-size: 28px;
             margin-bottom: 5px;
         }
-        .logo-subtitle {
-            font-size: 14px;
+        
+        .logo-section p {
             color: #666;
+            font-size: 14px;
         }
+        
         .form-group {
             margin-bottom: 20px;
         }
+        
         .form-group label {
             display: block;
-            font-size: 14px;
-            color: #333;
             margin-bottom: 8px;
+            color: #444;
             font-weight: 500;
+            font-size: 14px;
         }
+        
         .input-wrapper {
             position: relative;
         }
+        
         .input-icon {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
+            color: #4C7C7A;
             font-size: 18px;
-            color: #666;
         }
-        .form-control {
+        
+        .form-group input {
             width: 100%;
-            padding: 12px 15px 12px 45px;
+            padding: 14px 15px 14px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 15px;
             transition: all 0.3s;
         }
-        .form-control:focus {
+        
+        .form-group input:focus {
             outline: none;
             border-color: #4C7C7A;
-            box-shadow: 0 0 0 4px rgba(76, 124, 122, 0.1);
+            box-shadow: 0 0 0 3px rgba(76, 124, 122, 0.1);
         }
+        
         .btn-login {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             background: linear-gradient(135deg, #4C7C7A 0%, #3A5F5D 100%);
             color: white;
             border: none;
             border-radius: 10px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
+            margin-top: 10px;
         }
+        
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(76, 124, 122, 0.4);
+            box-shadow: 0 10px 30px rgba(76, 124, 122, 0.4);
         }
-        .btn-login:active {
-            transform: translateY(0);
-        }
+        
         .btn-login:disabled {
-            opacity: 0.6;
+            background: #ccc;
             cursor: not-allowed;
+            transform: none;
         }
-        .alert {
-            padding: 12px 15px;
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
+            margin-top: 15px;
             display: none;
+            border: 1px solid #f5c6cb;
+            font-size: 14px;
         }
-        .alert-error {
-            background: #fee;
-            color: #c33;
-            border-left: 4px solid #c33;
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid #c3e6cb;
+            font-size: 14px;
         }
-        .alert-success {
-            background: #efe;
-            color: #3c3;
-            border-left: 4px solid #3c3;
-        }
-        .alert-info {
-            background: #e7f3ff;
-            color: #004085;
-            border-left: 4px solid #0066cc;
-        }
-        .footer-text {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
+        
+        .info-box {
+            background: rgba(76, 124, 122, 0.1);
+            border-left: 4px solid #4C7C7A;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 5px;
+            font-size: 13px;
             color: #666;
         }
-        .loading {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid #fff;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        
+        .info-box strong {
+            color: #4C7C7A;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo-section">
-            <div class="logo">🏛️</div>
-            <div class="logo-title">🏛️ Kainowapp</div>
-            <div class="logo-subtitle">Gerenciador Admin</div>
+            <div class="logo">
+                <span class="logo-text">K</span>
+            </div>
+            <h1>Kainowapp</h1>
+            <p>Gerenciador Admin</p>
         </div>
-
-        <div id="alert" class="alert"></div>
-
+        
         <form id="loginForm">
             <div class="form-group">
-                <label>📱 Telefone</label>
+                <label for="email">📱 Telefone ou Email</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">📞</span>
-                    <input 
-                        type="tel" 
-                        id="telefone" 
-                        class="form-control" 
-                        placeholder="11999999999"
-                        required
-                    >
+                    <span class="input-icon">📧</span>
+                    <input type="text" id="email" placeholder="11999999999 ou admin@kainow.app" required>
                 </div>
             </div>
-
+            
             <div class="form-group">
-                <label>🔑 Senha</label>
+                <label for="password">🔒 Senha</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
-                    <input 
-                        type="password" 
-                        id="senha" 
-                        class="form-control" 
-                        placeholder="Digite sua senha"
-                        required
-                    >
+                    <span class="input-icon">🔐</span>
+                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
                 </div>
             </div>
-
+            
             <button type="submit" class="btn-login" id="btnLogin">
                 Entrar no Gerenciador
             </button>
         </form>
-
-        <div class="footer-text">
-            ⚠️ Acesso restrito a administradores
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        <div class="info-box">
+            <strong>💡 Conta de teste:</strong><br>
+            📧 Email: admin@kainow.app<br>
+            📱 Telefone: 11999999999<br>
+            🔑 Senha: admin123
         </div>
     </div>
-
+    
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // Firebase config
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyBl8xVK91d9k00_zTkt_QjhCsg6njDE3Bw",
-            authDomain: "kainowapp.firebaseapp.com",
-            projectId: "kainowapp",
-            storageBucket: "kainowapp.firebasestorage.app",
-            messagingSenderId: "488426835060",
-            appId: "1:488426835060:web:37f7c72cbed08d8e6f83de"
+            apiKey: "AIzaSyBpEhJV3B_zE4WXJ0vY5KqZ8NhXLPyQz9M",
+            authDomain: "kainowapp-v2.firebaseapp.com",
+            projectId: "kainowapp-v2",
+            storageBucket: "kainowapp-v2.firebasestorage.app",
+            messagingSenderId: "585896559512",
+            appId: "1:585896559512:web:8b4f3d1e9c0a2f6g7h8i9j"
         };
-
+        
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
-
-        const alertDiv = document.getElementById('alert');
-        const btnLogin = document.getElementById('btnLogin');
-        const loginForm = document.getElementById('loginForm');
-
-        function showAlert(message, type = 'error') {
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.style.display = 'block';
-            alertDiv.textContent = message;
+        
+        // IMPORTANTE: Verificar se já está logado ANTES de carregar a página
+        const existingAuth = localStorage.getItem('adminSession');
+        if (existingAuth) {
+            try {
+                const sessionData = JSON.parse(existingAuth);
+                const loginTime = new Date(sessionData.loginTime).getTime();
+                const now = new Date().getTime();
+                const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+                
+                if (hoursSinceLogin < 24) {
+                    // Ainda está logado, redirecionar IMEDIATAMENTE
+                    window.location.replace('/gerenciador');
+                } else {
+                    // Sessão expirada
+                    localStorage.removeItem('adminSession');
+                }
+            } catch (e) {
+                localStorage.removeItem('adminSession');
+            }
         }
-
-        function hideAlert() {
-            alertDiv.style.display = 'none';
-        }
-
-        loginForm.addEventListener('submit', async (e) => {
+        
+        // Toggle password visibility
+        window.togglePassword = function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        };
+        
+        // Form submit
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const telefone = document.getElementById('telefone').value.trim();
-            const senha = document.getElementById('senha').value;
-
-            if (!telefone || !senha) {
-                showAlert('❌ Preencha todos os campos');
+            const emailInput = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btnLogin = document.getElementById('btnLogin');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Limpar mensagens
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Validação básica
+            if (!emailInput || !password) {
+                errorMessage.textContent = '❌ Preencha todos os campos!';
+                errorMessage.style.display = 'block';
                 return;
             }
-
-            // Disable button and show loading
+            
+            // Desabilitar botão
             btnLogin.disabled = true;
-            btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
-            hideAlert();
-
+            btnLogin.textContent = '⏳ Entrando...';
+            
             try {
-                console.log('🔍 Buscando usuário:', telefone);
-
-                // Query Firestore for user with this phone
-                const usersRef = collection(db, 'users');
-                const q = query(usersRef, where('phone_number', '==', telefone));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    throw new Error('Usuário não encontrado');
+                // Converter telefone em email se necessário
+                let email = emailInput;
+                if (emailInput.match(/^\d{11}$/)) {
+                    // É um telefone, converter para email
+                    email = `${emailInput}@kainow.app`;
+                } else if (!emailInput.includes('@')) {
+                    email = `${emailInput}@kainow.app`;
                 }
-
-                const userDoc = querySnapshot.docs[0];
+                
+                console.log('🔐 Tentando login com:', email);
+                
+                // Login no Firebase
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                console.log('✅ Login Firebase OK:', user.uid);
+                
+                // Buscar dados do usuário no Firestore
+                const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
+                
+                if (!userDoc.exists()) {
+                    throw new Error('Usuário não encontrado no banco de dados');
+                }
+                
                 const userData = userDoc.data();
-
-                console.log('✅ Usuário encontrado:', userData.name);
-                console.log('🔐 Role:', userData.role);
-
-                // Check if user is admin
-                if (userData.role !== 'admin') {
-                    throw new Error('Acesso negado. Apenas administradores podem acessar.');
+                console.log('📊 Dados do usuário:', userData);
+                
+                // Verificar se é admin
+                if (userData.tipo !== 'administrador' && userData.tipo !== 'admin') {
+                    throw new Error('Acesso negado! Apenas administradores podem acessar.');
                 }
-
-                // Create admin session
-                const adminSession = {
-                    userId: userDoc.id,
-                    name: userData.name,
-                    phone: userData.phone_number,
-                    email: userData.email || '',
-                    role: userData.role,
+                
+                // Salvar sessão
+                const sessionData = {
+                    uid: user.uid,
+                    email: user.email,
+                    name: userData.nome || 'Admin',
+                    phone: userData.telefone || '',
+                    tipo: userData.tipo,
                     loginTime: new Date().toISOString()
                 };
-
-                // Save to localStorage (persistent)
-                localStorage.setItem('adminSession', JSON.stringify(adminSession));
-
-                console.log('✅ Sessão criada:', adminSession);
-
-                // Show success
-                showAlert('✅ Login realizado! Redirecionando...', 'success');
-
-                // Redirect to gerenciador
-                setTimeout(() => {
-                    window.location.href = '/gerenciador';
-                }, 1000);
-
-            } catch (error) {
-                console.error('❌ Erro ao fazer login:', error);
-                showAlert('❌ ' + error.message);
                 
-                // Re-enable button
+                localStorage.setItem('adminSession', JSON.stringify(sessionData));
+                console.log('💾 Sessão salva:', sessionData);
+                
+                // Sucesso
+                successMessage.textContent = '✅ Login realizado com sucesso! Redirecionando...';
+                successMessage.style.display = 'block';
+                btnLogin.textContent = '✅ Sucesso!';
+                
+                // Redirecionar após 1.5 segundos
+                setTimeout(() => {
+                    console.log('🚀 Redirecionando para /gerenciador');
+                    window.location.replace('/gerenciador');
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ Erro no login:', error);
+                
+                let errorMsg = '❌ Erro ao fazer login. Verifique suas credenciais.';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMsg = '❌ Usuário não encontrado!';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMsg = '❌ Senha incorreta!';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = '❌ Email inválido!';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMsg = '❌ Muitas tentativas! Aguarde alguns minutos.';
+                } else if (error.message) {
+                    errorMsg = `❌ ${error.message}`;
+                }
+                
+                errorMessage.textContent = errorMsg;
+                errorMessage.style.display = 'block';
+                
                 btnLogin.disabled = false;
                 btnLogin.textContent = 'Entrar no Gerenciador';
             }
         });
-
-        // Check if already logged in
-        window.addEventListener('DOMContentLoaded', () => {
-            const session = localStorage.getItem('adminSession');
-            
-            if (session) {
-                try {
-                    const sessionData = JSON.parse(session);
-                    
-                    // Check if session expired (24 hours)
-                    const loginTime = new Date(sessionData.loginTime);
-                    const now = new Date();
-                    const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
-                    
-                    if (hoursDiff < 24) {
-                        showAlert('✅ Você já está logado. Redirecionando...', 'info');
-                        setTimeout(() => {
-                            window.location.href = '/gerenciador';
-                        }, 1000);
-                    } else {
-                        // Session expired
-                        localStorage.removeItem('adminSession');
-                    }
-                } catch (e) {
-                    localStorage.removeItem('adminSession');
-                }
-            }
-        });
+        
+        console.log('🎯 Sistema de login carregado!');
     </script>
 </body>
 </html>
