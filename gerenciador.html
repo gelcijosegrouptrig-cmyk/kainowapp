@@ -871,8 +871,35 @@
             }
         }
         
-        // Check authentication
+        // Check authentication (aceita auth do app ou do login web)
         function checkAuth() {
+            // 🔥 PRIORIDADE 1: Verificar autenticação injetada pelo APP
+            const appAuth = localStorage.getItem('adminAuth');
+            if (appAuth) {
+                try {
+                    const authData = JSON.parse(appAuth);
+                    const now = Date.now();
+                    
+                    // Verificar se não expirou
+                    if (authData.expiresAt && authData.expiresAt > now) {
+                        console.log('✅ Autenticado via APP:', authData.name);
+                        
+                        // Update admin info in sidebar
+                        document.getElementById('adminName').textContent = authData.name || 'Admin';
+                        document.getElementById('adminEmail').textContent = authData.email || authData.phone || '';
+                        
+                        return true;
+                    } else {
+                        console.log('⏰ Auth do APP expirou');
+                        localStorage.removeItem('adminAuth');
+                    }
+                } catch (e) {
+                    console.error('❌ Erro ao processar auth do APP:', e);
+                    localStorage.removeItem('adminAuth');
+                }
+            }
+            
+            // 🔥 PRIORIDADE 2: Verificar sessão do login web
             const session = localStorage.getItem('adminSession');
             
             if (!session) {
